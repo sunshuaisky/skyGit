@@ -35,9 +35,7 @@ export default class HomePage extends Component {
                 source={require('../../res/images/ic_polular.png')}
               />
             )}
-            onPress={() =>
-              this.setState({ selectedTab: 'tb_polular', component: Boy })
-            }
+            onPress={() => this.setState({ selectedTab: 'tb_polular' })}
           >
             <View style={styles.page1} />
           </TabNavigator.Item>
@@ -57,6 +55,7 @@ export default class HomePage extends Component {
                 source={require('../../res/images/ic_trending.png')}
               />
             )}
+            onPress={() => this.setState({ selectedTab: 'tb_trending' })}
           >
             <View style={styles.page2} />
           </TabNavigator.Item>
