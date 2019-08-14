@@ -20,7 +20,7 @@ export default class WelcomePage extends Component {
     return (
       <View>
         <NavigationBar title={'欢迎'} />
-        <Text>欢迎</Text>
+        <Text style={{ fontSize: 29 }}>欢迎</Text>
       </View>
     )
   }

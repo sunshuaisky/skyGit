@@ -7,6 +7,9 @@
 import React, { Component } from 'react'
 import { AppRegistry, StyleSheet, Text, View, Image } from 'react-native'
 import TabNavigator from 'react-native-tab-navigator'
+import PopularPage from './PopularPage'
+import AsyncStorageTest from './AsyncStorageTest'
+import MyPage from './my/MyPage'
 
 export default class HomePage extends Component {
   constructor(props) {
@@ -22,7 +25,7 @@ export default class HomePage extends Component {
           <TabNavigator.Item
             selected={this.state.selectedTab === 'tb_polular'}
             title="最热"
-            selectedTitleStyle={{ color: 'red' }}
+            selectedTitleStyle={{ color: '#2196F3' }}
             renderIcon={() => (
               <Image
                 style={styles.image}
@@ -31,13 +34,13 @@ export default class HomePage extends Component {
             )}
             renderSelectedIcon={() => (
               <Image
-                style={[styles.image, { tintColor: 'red' }]}
+                style={[styles.image, { tintColor: '#2196F3' }]}
                 source={require('../../res/images/ic_polular.png')}
               />
             )}
             onPress={() => this.setState({ selectedTab: 'tb_polular' })}
           >
-            <View style={styles.page1} />
+            <PopularPage />
           </TabNavigator.Item>
           <TabNavigator.Item
             selected={this.state.selectedTab === 'tb_trending'}
@@ -57,7 +60,7 @@ export default class HomePage extends Component {
             )}
             onPress={() => this.setState({ selectedTab: 'tb_trending' })}
           >
-            <View style={styles.page2} />
+            <AsyncStorageTest />
           </TabNavigator.Item>
           <TabNavigator.Item
             selected={this.state.selectedTab === 'tb_favorite'}
@@ -97,7 +100,7 @@ export default class HomePage extends Component {
             )}
             onPress={() => this.setState({ selectedTab: 'tb_my' })}
           >
-            <View style={styles.page2} />
+            <MyPage {...this.props} />
           </TabNavigator.Item>
         </TabNavigator>
       </View>
