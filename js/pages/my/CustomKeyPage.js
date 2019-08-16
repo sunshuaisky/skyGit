@@ -81,25 +81,22 @@ export default class CustomKeyPage extends Component {
     return views
   }
 
-  onClick(index) {
-    this.state.dataArray[index].checked = !this.state.dataArray[index].checked
-    ArrayUtils.updateArray(
-      this.changeValue,
-      this.state.dataArray[index].checked
-    )
+  onClick(data) {
+    data.checked = !data.checked
+    ArrayUtils.updateArray(this.changeValue, data)
     this.setState({
       dataArray: this.state.dataArray
     })
   }
 
-  renderCheckBox(index) {
+  renderCheckBox(data) {
     let leftText = data.name
     // let isChecked = this.isRemoveKey ? false : data.checked;
     return (
       <CheckBox
         style={{ flex: 1, padding: 10 }}
         onClick={() => this.onClick(data)}
-        isChecked={this.state.dataArray[index].checked}
+        isChecked={data.checked}
         leftText={leftText}
         checkedImage={
           <Image
