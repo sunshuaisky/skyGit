@@ -1,18 +1,130 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  Dimensions
+} from 'react-native'
+import CheckBox from 'react-native-check-box'
 import NavigationBar from '../../common/NavigationBar'
-import Viewutils from '../../utils/ViewUtils'
+import ViewUtils from '../../utils/ViewUtils'
+import ArrayUtils from '../../utils/ArrayUtils'
+import LanguageDao, { FLAG_LANGUAGE } from '../../expand/dao/LanguageDao'
+
+const windowWidth = Dimensions.get('window').width
 
 export default class CustomKeyPage extends Component {
   constructor(props) {
     super(props)
+    this.languageDao = new LanguageDao(FLAG_LANGUAGE.flag_key)
+    this.changeValue = []
+    this.state = {
+      dataArray: []
+    }
+  }
+
+  componentDidMount() {
+    this.loadData()
+  }
+
+  loadData() {
+    this.languageDao
+      .fetch()
+      .then(result => {
+        this.setState({
+          dataArray: result
+        })
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
 
   onSave() {
+    if (this.changeValue.length === 0) {
+      this.props.navigator.pop()
+      return
+    }
+    this.languageDao.save(this.state.dataArray)
     this.props.navigator.pop()
   }
 
+  renderView() {
+    if (!this.state.dataArray || this.state.dataArray.length === 0) return null
+    let len = this.state.dataArray.length
+    let views = []
+    for (let i = 0, l = len - 2; i < l; i += 2) {
+      views.push(
+        <View key={i}>
+          <View style={styles.item}>
+            {this.renderCheckBox(this.state.dataArray[i])}
+            {this.renderCheckBox(this.state.dataArray[i + 1])}
+          </View>
+          <View style={styles.line} />
+        </View>
+      )
+    }
+    views.push(
+      <View key={len - 1}>
+        <View style={styles.item}>
+          {len % 2 === 0
+            ? this.renderCheckBox(this.state.dataArray[len - 2])
+            : null}
+          {this.renderCheckBox(this.state.dataArray[len - 1])}
+        </View>
+        <View style={styles.line} />
+      </View>
+    )
+    return views
+  }
+
+  onClick(index) {
+    this.state.dataArray[index].checked = !this.state.dataArray[index].checked
+    ArrayUtils.updateArray(
+      this.changeValue,
+      this.state.dataArray[index].checked
+    )
+    this.setState({
+      dataArray: this.state.dataArray
+    })
+  }
+
+  renderCheckBox(index) {
+    let leftText = data.name
+    // let isChecked = this.isRemoveKey ? false : data.checked;
+    return (
+      <CheckBox
+        style={{ flex: 1, padding: 10 }}
+        onClick={() => this.onClick(data)}
+        isChecked={this.state.dataArray[index].checked}
+        leftText={leftText}
+        checkedImage={
+          <Image
+            style={{ tintColor: '#6495ED' }}
+            source={require('./images/ic_check_box.png')}
+          />
+        }
+        unCheckedImage={
+          <Image
+            style={{ tintColor: '#6495ED' }}
+            source={require('./images/ic_check_box_outline_blank.png')}
+          />
+        }
+      />
+    )
+  }
+
   render() {
+    let rightButton = (
+      <TouchableOpacity onPress={() => this.onSave()}>
+        <View style={{ margin: 10 }}>
+          <Text style={styles.title}>保存</Text>
+        </View>
+      </TouchableOpacity>
+    )
     return (
       <View style={styles.container}>
         <NavigationBar
@@ -20,8 +132,10 @@ export default class CustomKeyPage extends Component {
           statusBar={{
             backgroundColor: '#6495ED'
           }}
-          leftButton={Viewutils.getLeftButton(() => this.onSave())}
+          leftButton={ViewUtils.getLeftButton(() => this.onSave())}
+          rightButton={rightButton}
         />
+        <ScrollView>{this.renderView()}</ScrollView>
       </View>
     )
   }
@@ -34,5 +148,17 @@ const styles = StyleSheet.create({
   },
   tips: {
     fontSize: 29
+  },
+  title: {
+    fontSize: 18,
+    color: 'white'
+  },
+  line: {
+    height: 0.3,
+    backgroundColor: 'darkgray'
+  },
+  item: {
+    flexDirection: 'row',
+    alignItems: 'center'
   }
 })
