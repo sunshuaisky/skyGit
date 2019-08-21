@@ -6,15 +6,13 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
-  Dimensions
+  Alert
 } from 'react-native'
 import CheckBox from 'react-native-check-box'
 import NavigationBar from '../../common/NavigationBar'
 import ViewUtils from '../../utils/ViewUtils'
 import ArrayUtils from '../../utils/ArrayUtils'
 import LanguageDao, { FLAG_LANGUAGE } from '../../expand/dao/LanguageDao'
-
-const windowWidth = Dimensions.get('window').width
 
 export default class CustomKeyPage extends Component {
   constructor(props) {
@@ -114,6 +112,28 @@ export default class CustomKeyPage extends Component {
     )
   }
 
+  onBack() {
+    if (this.changeValue.length === 0) {
+      this.props.navigator.pop()
+      return
+    }
+    Alert.alert('提示', '需要保存修改吗？', [
+      {
+        text: '不保存',
+        onPress: () => {
+          this.props.navigator.pop()
+        },
+        style: 'cancel'
+      },
+      {
+        text: '保存',
+        onPress: () => {
+          this.onSave()
+        }
+      }
+    ])
+  }
+
   render() {
     let rightButton = (
       <TouchableOpacity onPress={() => this.onSave()}>
@@ -129,7 +149,7 @@ export default class CustomKeyPage extends Component {
           statusBar={{
             backgroundColor: '#6495ED'
           }}
-          leftButton={ViewUtils.getLeftButton(() => this.onSave())}
+          leftButton={ViewUtils.getLeftButton(() => this.onBack())}
           rightButton={rightButton}
         />
         <ScrollView>{this.renderView()}</ScrollView>

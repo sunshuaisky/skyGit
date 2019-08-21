@@ -6,6 +6,7 @@ import ScrollableTabView, {
 import NavigationBar from '../common/NavigationBar'
 import DataRepository from '../expand/dao/DataRepository'
 import RepositoryCell from '../common/RepositoryCell'
+import LanguageDao, { FLAG_LANGUAGE } from '../expand/dao/LanguageDao'
 
 const URL = 'https://api.github.com/search/repositories?q='
 const QUERY_STR = '&sort=stars'
@@ -13,9 +14,48 @@ const QUERY_STR = '&sort=stars'
 export default class PopularPage extends Component {
   constructor(props) {
     super(props)
+    this.languageDao = new LanguageDao(FLAG_LANGUAGE.flag_key)
+    this.state = {
+      languages: []
+    }
+  }
+
+  componentDidMount() {}
+
+  loadData() {
+    this.languageDao
+      .fetch()
+      .then(result => {
+        this.setState({
+          languages: result
+        })
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
 
   render() {
+    this.loadData()
+
+    let content =
+      this.state.languages.length > 0 ? (
+        <ScrollableTabView
+          renderTabBar={() => <ScrollableTabBar />}
+          tabBarBackgroundColor="#2196F3"
+          tabBarInactiveTextColor="mintcream"
+          tabBarActiveTextColor="white"
+          tabBarUnderlineStyle={{ backgroundColor: '#e7e7e7', height: 2 }}
+        >
+          {this.state.languages.map((result, i) => {
+            return result.checked ? (
+              <PopolarTab key={i} tabLabel={result.name}>
+                {result.name}
+              </PopolarTab>
+            ) : null
+          })}
+        </ScrollableTabView>
+      ) : null
     return (
       <View style={styles.container}>
         <NavigationBar
@@ -24,19 +64,7 @@ export default class PopularPage extends Component {
             backgroundColor: '#2196F3'
           }}
         />
-        <ScrollableTabView
-          renderTabBar={() => <ScrollableTabBar />}
-          tabBarBackgroundColor="#2196F3"
-          tabBarInactiveTextColor="mintcream"
-          tabBarActiveTextColor="white"
-          tabBarUnderlineStyle={{ backgroundColor: '#e7e7e7', height: 2 }}
-        >
-          <PopolarTab tabLabel="All">All</PopolarTab>
-          <PopolarTab tabLabel="Java">Java</PopolarTab>
-          <PopolarTab tabLabel="IOS">IOS</PopolarTab>
-          <PopolarTab tabLabel="Android">Android</PopolarTab>
-          <PopolarTab tabLabel="JavaScript">JavaScript</PopolarTab>
-        </ScrollableTabView>
+        {content}
       </View>
     )
   }
