@@ -23,7 +23,10 @@ export default class MyPage extends Component {
           onPress={() => {
             this.props.navigator.push({
               component: CustomKeyPage,
-              params: { ...this.props }
+              params: {
+                ...this.props,
+                isRemoveKey: false
+              }
             })
           }}
         >
@@ -39,6 +42,20 @@ export default class MyPage extends Component {
           }}
         >
           标签排序
+        </Text>
+        <Text
+          style={{ fontSize: 29 }}
+          onPress={() => {
+            this.props.navigator.push({
+              component: CustomKeyPage,
+              params: {
+                ...this.props,
+                isRemoveKey: true
+              }
+            })
+          }}
+        >
+          标签移除
         </Text>
       </View>
     )

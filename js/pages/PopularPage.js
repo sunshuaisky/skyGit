@@ -1,5 +1,12 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, ListView, RefreshControl } from 'react-native'
+import {
+  View,
+  Text,
+  StyleSheet,
+  ListView,
+  RefreshControl,
+  DeviceEventEmitter
+} from 'react-native'
 import ScrollableTabView, {
   ScrollableTabBar
 } from 'react-native-scrollable-tab-view'
@@ -87,16 +94,46 @@ class PopolarTab extends Component {
     this.onLoad()
   }
 
+  /**
+   * 判断缓存过期
+   * @param {*} longTime
+   */
+
+  checkDate(longTime) {
+    let currentDate = new Date()
+    let targetDate = new Date()
+    targetDate.setTime(longTime)
+    if (currentDate.getMonth() !== targetDate.getMonth()) return false
+    if (currentDate.getDate() !== targetDate.getDate()) return false
+    if (currentDate.getHours() - targetDate.getHours() > 4) return false
+    return true
+  }
+
   onLoad() {
     this.setState({
       isLoading: true
     })
     let url = URL + this.props.tabLabel + QUERY_STR
     this.dataRepository
-      .fetchNetrepository(url)
+      .fetchRepository(url)
       .then(result => {
+        let items = result && result.items ? result.items : result ? result : []
+        if (
+          result &&
+          result.update_date &&
+          !this.checkDate(result.update_date)
+        ) {
+          return this.dataRepository.fetchNetrepository(url)
+        }
         this.setState({
-          dataSource: this.state.dataSource.cloneWithRows(result.items),
+          dataSource: this.state.dataSource.cloneWithRows(items),
+          isLoading: false
+        })
+      })
+      .then(items => {
+        if (!items || items.length === 0) return
+        this.setState({
+          dataSource: this.state.dataSource.cloneWithRows(items),
           isLoading: false
         })
       })

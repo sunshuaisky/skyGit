@@ -101,13 +101,6 @@ export default class SortKeyPage extends Component {
   }
 
   render() {
-    let rightButton = (
-      <TouchableOpacity onPress={() => this.onSave(false)}>
-        <View style={{ margin: 10 }}>
-          <Text style={styles.title}>保存</Text>
-        </View>
-      </TouchableOpacity>
-    )
     return (
       <View style={styles.container}>
         <NavigationBar
@@ -116,7 +109,7 @@ export default class SortKeyPage extends Component {
             backgroundColor: '#6495ED'
           }}
           leftButton={ViewUtils.getLeftButton(() => this.onBack())}
-          rightButton={rightButton}
+          rightButton={ViewUtils.getRightButton('保存', () => this.onSave())}
         />
         <SortableListView
           data={this.state.checkedArray}
